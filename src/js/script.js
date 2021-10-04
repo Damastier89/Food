@@ -1,6 +1,6 @@
 window.addEventListener('DOMContentLoaded', () => {
 
-//////////////////////tabs///////////////////////
+///////////////////// Tabs ///////////////////////
 
 const tabs = document.querySelectorAll(".tabheader__item");
 const tabsContent = document.querySelectorAll(".tabcontent");
@@ -39,7 +39,7 @@ tabsParent.addEventListener("click", (event) => {
 hideTabContent();
 showTabContent();
 
- /////////////////////////timer/////////////////////
+ ////////////////////// Timer /////////////////////
 const deadLine = '2021-12-31';
 
 function getTimeRemaining(endtime) {
@@ -92,52 +92,56 @@ function setClock(selector, endtime) {
 
 setClock('.timer', deadLine);
 
-    // ////////////////////////Modal///////////////////////
+//////////////////////// Modal ///////////////////////
 
-    // const modalBtn = document.querySelectorAll('[data-modal]');
-    // const modal = document.querySelector('.modal');
-    // const modalCloseBtn = document.querySelector('[data-close]');
+const modalTrigger = document.querySelectorAll("[data-modal]");
+const modal = document.querySelector(".modal");
+const modalCloseBtn = document.querySelector("[data-close]")
 
-    // function modalOpen() {
-    //     modal.style.display = 'block';
-    //     document.body.style.overflow = 'hidden';
-    //     clearInterval(modalTimer);
-    // }
+function modalOpen() {
+	modal.style.display = "block";
+	document.body.style.overflow = "hidden";
+	clearInterval(modalTimer); 
+};
 
-    // modalBtn.forEach(btn => {
-    //     btn.addEventListener('click', modalOpen);
-    // });
+const modalTimer = setTimeout(modalOpen, 5000);
 
-    // function modalClose() {
-    //     modal.style.display = 'none';
-    //     document.body.style.overflow = '';
-    // }
+modalTrigger.forEach( btn => {
+	btn.addEventListener("click", modalOpen);
+});
 
-    // modalCloseBtn.addEventListener('click', modalClose);
+function modalClose() {
+	modal.style.display = "none";
+	document.body.style.overflow = "";
+}
 
-    // modal.addEventListener('click', (e) => {
-    //     if (e.target === modal) {
-    //         modalClose();
-    //     }
-    // });
+modalCloseBtn.addEventListener("click", modalClose);
 
-    // document.addEventListener('keydown', (e) => {
-    //     if (e.code === "Escape") {
-    //         modalClose();
-    //     }
-    // });
+modal.addEventListener("click", (event) => {
+	if (event.target === modal) {
+		modalClose();
+	}
+});
 
-    // const modalTimer = setTimeout(modalOpen, 5000);
+document.addEventListener("keydown", (event) => {
+	if (event.code === "Escape") {
+		modalClose();
+	}
+});
 
-    // function showModalByScroll() {
-    //     // пользователь долистал до конца страници(скролл с боку + контент стрницы)
-    //     if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
-    //         modalOpen();
-    //         window.removeEventListener('scroll', showModalByScroll);
-    //     }
-    // }
+function showModalByScroll() {
+	let pageYOffset = window.pageYOffset,
+	    clientHeight = document.documentElement.clientHeight,
+			scrollHeight = document.documentElement.scrollHeight;
+	// пользователь долистал до конца страници(скролл с боку + контент стрницы)
+	if (pageYOffset + clientHeight >= scrollHeight) {
+		modalOpen();
+		window.removeEventListener("scroll", showModalByScroll);
+	}
+};
 
-    // window.addEventListener('scroll', showModalByScroll);
+window.addEventListener("scroll", showModalByScroll);
+
 
     // ////////////Class Card//////////////
 
