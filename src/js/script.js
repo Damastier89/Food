@@ -224,7 +224,7 @@ class CardMenu {
 const forms = document.querySelectorAll('form');
 
 const message = {
-	loading: 'Загрузка',
+	loading: 'img/spinner.svg',
 	success: 'Спасибо! Мы скоро свяжемся с вами',
 	failuer: 'Что-то пошло не так... о_О',
 }
@@ -237,10 +237,14 @@ function postData(form) {
 	form.addEventListener('submit', (event) => {
 		event.preventDefault();
 
-		const statusMessage = document.createElement('div');
+		const statusMessage = document.createElement('img');
 		statusMessage.classList.add('status');
-		statusMessage.textContent = message.loading;
-		form.append(statusMessage);
+		statusMessage.src = message.loading;
+		statusMessage.style.cssText = `
+			display: block;
+			margin: 0 auto;
+		`;
+		form.insertAdjacentElement('afterend', statusMessage);
 
 		const request = new XMLHttpRequest();
 		request.open('POST', 'server.php');
@@ -263,17 +267,39 @@ function postData(form) {
 		request.addEventListener('load', () => {
 			if (request.status === 200) {
 				console.log(request.response);
-				statusMessage.textContent = message.success;
+				showThanksModal(message.success);
 				form.reset();
-				setTimeout(() => {
-					statusMessage.remove();
-				}, 5000);
-				
+				statusMessage.remove();
 			} else {
-				statusMessage.textContent = message.failuer;
+				showThanksModal(message.failuer);
 			}
 		});
 	});
+}
+
+function showThanksModal(message) {
+	const prevModalDialog = document.querySelector('.modal__dialog');
+
+	prevModalDialog.classList.add('hide');
+	modalOpen();
+
+	const thanksModal = document.createElement('div');
+	thanksModal.classList.add('modal__dialog');
+	thanksModal.innerHTML = `
+		<div class="modal__content">
+			<div class="modal__close" data-close>×</div>
+			<div class="modal__title">${message}</div>
+		</div>
+	`;
+
+	document.querySelector('.modal').append(thanksModal);
+	setTimeout(() => {
+		thanksModal.remove();
+		prevModalDialog.classList.add('show');
+		prevModalDialog.classList.remove('hide');
+		modalClose();
+	}, 3000);
+
 }
 
 
