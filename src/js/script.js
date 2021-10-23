@@ -246,34 +246,61 @@ function postData(form) {
 		`;
 		form.insertAdjacentElement('afterend', statusMessage);
 
-		const request = new XMLHttpRequest();
-		request.open('POST', 'server.php');
-
-		// request.setRequestHeader('Content-type', 'multipart/form-data') если использовать данный заголовок
-		// в связке с XMLHttpRequest(), то будет возникать ошибка. Заголовок проставиться автоматически
-		// formData используется в php
-		request.setRequestHeader('Content-type', 'application/json');
-		const formData = new FormData(form); // Всегда проверять наличие атрибута "name" у input
+		const formData = new FormData(form);
 
 		const object = {};
 		formData.forEach(function(value, key) { // Перебираем formData т.к. его нельзя передать в JSON
 			object[key] = value;
 		});
 
-		const json = JSON.stringify(object); // Конвертируем в JSON
-
-		request.send(json);
-
-		request.addEventListener('load', () => {
-			if (request.status === 200) {
-				console.log(request.response);
+		fetch(`server.php`, {
+			method: 'POST',
+			headers: {
+				'Content-type': 'application/json'
+			},
+			body: JSON.stringify(object)
+		}).then(data => data.text())
+		  .then(data => {
+				console.log(data);
 				showThanksModal(message.success);
-				form.reset();
 				statusMessage.remove();
-			} else {
-				showThanksModal(message.failuer);
-			}
+		}).catch(() => { // если fetch попадает на ошибку связанную с http(404 и т.д.) он не выкинет reject
+										 // для него это не ошибка
+			showThanksModal(message.failuer);
+		}).finally(() => {
+			form.reset();
 		});
+
+//////////////////////  XMLHttpRequest ///////////////////////
+		// const request = new XMLHttpRequest();
+		// request.open('POST', 'server.php');
+
+		// request.setRequestHeader('Content-type', 'multipart/form-data') если использовать данный заголовок
+		// в связке с XMLHttpRequest(), то будет возникать ошибка. Заголовок проставиться автоматически
+		// formData используется в php
+		// request.setRequestHeader('Content-type', 'application/json');
+		// const formData = new FormData(form); // Всегда проверять наличие атрибута "name" у input
+
+		// const object = {};
+		// formData.forEach(function(value, key) { // Перебираем formData т.к. его нельзя передать в JSON
+		// 	object[key] = value;
+		// });
+
+		// const json = JSON.stringify(object); // Конвертируем в JSON
+
+		// request.send(json);
+
+		// request.addEventListener('load', () => {
+		// 	if (request.status === 200) {
+		// 		console.log(request.response);
+		// 		showThanksModal(message.success);
+		// 		form.reset();
+		// 		statusMessage.remove();
+		// 	} else {
+		// 		showThanksModal(message.failuer);
+		// 	}
+		// });
+///////////////////////////////////////////////////////////////
 	});
 }
 
@@ -300,11 +327,7 @@ function showThanksModal(message) {
 		modalClose();
 	}, 3000);
 
-}
-
-
-
-
+};
 
 
 });
