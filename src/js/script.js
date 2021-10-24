@@ -100,10 +100,14 @@ const modal = document.querySelector(".modal");
 function modalOpen() {
 	modal.style.display = "block";
 	document.body.style.overflow = "hidden";
-	clearInterval(modalTimer); 
+	// clearInterval(modalTimer); 
 };
 
+<<<<<<< HEAD
 const modalTimer = setTimeout(modalOpen, 50000);
+=======
+// const modalTimer = setTimeout(modalOpen, 5000);
+>>>>>>> a4e015fff0c327963ad18d39db7e9318e3dfb6e7
 
 modalTrigger.forEach( btn => {
 	btn.addEventListener("click", modalOpen);
@@ -325,22 +329,6 @@ function showThanksModal(message) {
 	}, 3000);
 
 };
-
-fetch('http://localhost:3000/menu')
-	.then(data => data.json())
-	.then(responce => console.log(responce));
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 });
