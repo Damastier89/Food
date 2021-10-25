@@ -182,39 +182,61 @@ class CardMenu {
 
 		this.parent.append(element);
 	}
-}
+};
 
-    new CardMenu (
-        "img/tabs/vegy.jpg",
-        "vegy",
-        'Меню "Фитнес"',
-        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-        9,
-        ".menu .container",
-        // не добавляем классы
-    ).render(); // данный синтаксис используется если нужно использовать класс один раз
+async function getData(url) {
+	// Данный код асенхронный , ответ может придти не сразу и в переменную 
+	// res запишется null или undefined. Для этого успользуем async/await
+	// и он будет дожидаться результата запроса
+	const request = await fetch(url);
 
-    const vipMenu = new CardMenu (
-        "img/tabs/elite.jpg",
-        "elite",
-        'Меню "Премиум"',
-        'В меню "Премиум" мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-        12,
-        ".menu .container",
-        "menu__item"
-    );
-		vipMenu.render();
+  if (!request.ok) {
+		// выкидываем ошибку если ответ не OK
+		throw new Error(`Could not fetch ${url}, status: ${request.status}`); 
+	};
 
-    const leanMenu = new CardMenu (
-        "img/tabs/post.jpg",
-        "post",
-        'Меню "Постное"',
-        'Меню "Постное" - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-        16,
-        ".menu .container",
-        "menu__item"
-    );
-		leanMenu.render();
+	return await request.json();
+};
+
+getData(`http://localhost:3000/menu`)
+	.then(cards => { // перебираем полученный массив 
+		cards.forEach(({img, altimg, title, descr, price}) => { // используем деструктуризацию для полученного обьекта
+			new CardMenu(img, altimg, title, descr, price, ".menu .container").render();
+		});
+	});
+
+
+// new CardMenu (
+// 		"img/tabs/vegy.jpg",
+// 		"vegy",
+// 		'Меню "Фитнес"',
+// 		'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+// 		9,
+// 		".menu .container",
+// 		// не добавляем классы
+// ).render(); // данный синтаксис используется если нужно использовать класс один раз
+
+// const vipMenu = new CardMenu (
+// 		"img/tabs/elite.jpg",
+// 		"elite",
+// 		'Меню "Премиум"',
+// 		'В меню "Премиум" мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+// 		12,
+// 		".menu .container",
+// 		"menu__item"
+// );
+// vipMenu.render();
+
+// const leanMenu = new CardMenu (
+// 		"img/tabs/post.jpg",
+// 		"post",
+// 		'Меню "Постное"',
+// 		'Меню "Постное" - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
+// 		16,
+// 		".menu .container",
+// 		"menu__item"
+// );
+// leanMenu.render();
 
 /////////////////// Forms ////////////////////
 
@@ -227,10 +249,25 @@ const message = {
 }
 
 forms.forEach(form => {
-	postData(form);
+	bindPostData(form);
 });
 
-function postData(form) {
+async function postData(url, data) {
+	// Данный код асенхронный , ответ может придти не сразу и в переменную 
+	// res запишется null или undefined. Для этого успользуем async/await
+	// и он будет дожидаться результата запроса
+	const res = await fetch(url, { 
+		method: 'POST',
+		headers: {
+			'Content-type': 'application/json'
+		},
+		body: data
+	})
+
+	return await res.json();
+};
+
+function bindPostData(form) {
 	form.addEventListener('submit', (event) => {
 		event.preventDefault();
 
@@ -245,18 +282,11 @@ function postData(form) {
 
 		const formData = new FormData(form);
 
-		const object = {};
-		formData.forEach(function(value, key) { // Перебираем formData т.к. его нельзя передать в JSON
-			object[key] = value;
-		});
+// Преобразуем formData с помощью entries() в массив масивов(матрицу), а после этого
+// с помощью Object.fromEntries преобразуем в обьект и далее JSON.stringify.		
+		const json = JSON.stringify(Object.fromEntries(formData.entries())) 
 
-		fetch(`server.php`, {
-			method: 'POST',
-			headers: {
-				'Content-type': 'application/json'
-			},
-			body: JSON.stringify(object)
-		}).then(data => data.text())
+		postData(`http://localhost:3000/requests`, json)
 		  .then(data => {
 				console.log(data);
 				showThanksModal(message.success);
@@ -326,9 +356,6 @@ function showThanksModal(message) {
 
 };
 
-fetch('http://localhost:3000/menu')
-	.then(data => data.json())
-	.then(responce => console.log(responce));
 
 
 
