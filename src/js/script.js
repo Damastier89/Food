@@ -198,11 +198,18 @@ async function getData(url) {
 	return await request.json();
 };
 
-getData(`http://localhost:3000/menu`)
-	.then(cards => { // перебираем полученный массив 
-		cards.forEach(({img, altimg, title, descr, price}) => { // используем деструктуризацию для полученного обьекта
+// getData(`http://localhost:3000/menu`)
+// 	.then(cards => { // перебираем полученный массив 
+// 		cards.forEach(({img, altimg, title, descr, price}) => { // используем деструктуризацию для полученного обьекта
+// 			new CardMenu(img, altimg, title, descr, price, ".menu .container").render();
+// 		});
+// 	});
+
+axios.get(`http://localhost:3000/menu`)
+	.then(cards => { // перебираем полученный массив
+		cards.data.forEach(({img, altimg, title, descr, price}) => { // используем деструктуризацию для полученного обьекта
 			new CardMenu(img, altimg, title, descr, price, ".menu .container").render();
-		});
+		})
 	});
 
 
@@ -355,6 +362,67 @@ function showThanksModal(message) {
 	}, 3000);
 
 };
+
+///////////////////// Slider /////////////////////
+
+const slides = document.querySelectorAll('.offer__slide'),
+      prev = document.querySelector('.offer__slider-prev'),
+      next = document.querySelector('.offer__slider-next');
+const total = document.querySelector('#total'),
+      current = document.querySelector('#current');
+let slideIndex = 1;
+
+showSlides(slideIndex);
+
+if (slides.length < 10) {
+	total.textContent = `0${slides.length}`;
+} else {
+	total.textContent = slides.length;
+}
+
+function showSlides(index) {
+// если индекс больше колличества слайдов и мы ушли в правую границу,
+// то возвращаемся в начало
+	if (index > slides.length) {
+		slideIndex = 1;
+	};
+// если ушли в отрицательную сторону , то перемещемся в конец
+	if (index < 1) {
+		slideIndex = slides.length;
+	};
+
+	slides.forEach(slide => slide.style.display = 'none');
+	slides[slideIndex - 1].style.display = 'block';
+
+	if (slides.length < 10) {
+		current.textContent = `0${slideIndex}`;
+	} else {
+		current.textContent = slideIndex;
+	}
+};
+
+function plusSlides(idx) {
+	showSlides(slideIndex += idx);
+};
+
+prev.addEventListener('click', () => {
+	plusSlides(-1)
+});
+
+next.addEventListener('click', () => {
+	plusSlides(+1)
+});
+
+
+
+
+
+
+
+
+
+
+
 
 
 
