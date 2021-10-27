@@ -370,49 +370,121 @@ const slides = document.querySelectorAll('.offer__slide'),
       next = document.querySelector('.offer__slider-next');
 const total = document.querySelector('#total'),
       current = document.querySelector('#current');
+const slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+			slidesField = document.querySelector('.offer_slider-inner'),
+			widthBlockSlider = window.getComputedStyle(slidesWrapper).width;
+
 let slideIndex = 1;
+let offset = 0;
 
-showSlides(slideIndex);
-
+// slider v.2.0
 if (slides.length < 10) {
 	total.textContent = `0${slides.length}`;
+	current.textContent = `0${slideIndex}`;
 } else {
 	total.textContent = slides.length;
+	current.textContent = slideIndex;
 }
 
-function showSlides(index) {
-// если индекс больше колличества слайдов и мы ушли в правую границу,
-// то возвращаемся в начало
-	if (index > slides.length) {
-		slideIndex = 1;
-	};
-// если ушли в отрицательную сторону , то перемещемся в конец
-	if (index < 1) {
-		slideIndex = slides.length;
-	};
+// помещаем все слайды во внутрь slidesField
+slidesField.style.width = 100 * slides.length + `%`;
+slidesField.style.display = 'flex';
+slidesField.style.transition = '0.5s all';
 
-	slides.forEach(slide => slide.style.display = 'none');
-	slides[slideIndex - 1].style.display = 'block';
+slidesWrapper.style.overflow = 'hidden';
+
+slides.forEach(slide => { // устанавливаем для каждого слайда нужную ширину
+	slide.style.width = widthBlockSlider;
+})
+
+next.addEventListener('click', () => {
+	// Проверяем что это последний слайд
+	if (offset == +widthBlockSlider.slice(0, widthBlockSlider.length - 2) * (slides.length - 1)) {
+		offset = 0;
+	} else {
+		offset += +widthBlockSlider.slice(0, widthBlockSlider.length - 2);
+	} 
+	slidesField.style.transform = `translateX(-${offset}px)`;
+
+	if (slideIndex == slides.length) {
+		slideIndex = 1;
+	} else {
+		slideIndex++;
+	};
 
 	if (slides.length < 10) {
-		current.textContent = `0${slideIndex}`;
+    current.textContent = `0${slideIndex}`;
 	} else {
 		current.textContent = slideIndex;
 	}
-};
 
-function plusSlides(idx) {
-	showSlides(slideIndex += idx);
-};
+});
 
 prev.addEventListener('click', () => {
-	plusSlides(-1)
+	// Проверяем что это последний слайд
+	if (offset == 0) {
+		offset = +widthBlockSlider.slice(0, widthBlockSlider.length - 2) * (slides.length - 1)
+	} else {
+		offset -= +widthBlockSlider.slice(0, widthBlockSlider.length - 2);
+	} 
+	slidesField.style.transform = `translateX(-${offset}px)`;
+
+	if (slideIndex == 1) {
+		slideIndex = slides.length;
+	} else {
+		slideIndex--;
+	};
+
+	if (slides.length < 10) {
+    current.textContent = `0${slideIndex}`;
+	} else {
+		current.textContent = slideIndex;
+	}
 });
 
-next.addEventListener('click', () => {
-	plusSlides(+1)
-});
+// // slider v.1.0
+// ////////////////////////////////////////////////////////////
+// showSlides(slideIndex);
 
+// if (slides.length < 10) {
+// 	total.textContent = `0${slides.length}`;
+// } else {
+// 	total.textContent = slides.length;
+// }
+
+// function showSlides(index) {
+// // если индекс больше колличества слайдов и мы ушли в правую границу,
+// // то возвращаемся в начало
+// 	if (index > slides.length) {
+// 		slideIndex = 1;
+// 	};
+// // если ушли в отрицательную сторону , то перемещемся в конец
+// 	if (index < 1) {
+// 		slideIndex = slides.length;
+// 	};
+
+// 	slides.forEach(slide => slide.style.display = 'none');
+// 	slides[slideIndex - 1].style.display = 'block';
+
+// 	if (slides.length < 10) {
+// 		current.textContent = `0${slideIndex}`;
+// 	} else {
+// 		current.textContent = slideIndex;
+// 	}
+// };
+
+// function plusSlides(idx) {
+// 	showSlides(slideIndex += idx);
+// };
+
+// prev.addEventListener('click', () => {
+// 	plusSlides(-1)
+// });
+
+// next.addEventListener('click', () => {
+// 	plusSlides(+1)
+// });
+//////////////////////////////////////////////////////
 
 
 
