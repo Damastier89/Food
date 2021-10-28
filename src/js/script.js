@@ -103,7 +103,7 @@ function modalOpen() {
 	clearInterval(modalTimer); 
 };
 
-const modalTimer = setTimeout(modalOpen, 5000);
+const modalTimer = setTimeout(modalOpen, 50000);
 
 modalTrigger.forEach( btn => {
 	btn.addEventListener("click", modalOpen);
@@ -372,9 +372,9 @@ const slides = document.querySelectorAll('.offer__slide'),
 const total = document.querySelector('#total'),
       current = document.querySelector('#current');
 const slidesWrapper = document.querySelector('.offer__slider-wrapper'),
-			slidesField = document.querySelector('.offer_slider-inner'),
-			widthBlockSlider = window.getComputedStyle(slidesWrapper).width;
-
+      widthBlockSlider = window.getComputedStyle(slidesWrapper).width,
+			slidesField = document.querySelector('.offer_slider-inner');
+			
 let slideIndex = 1;
 let offset = 0;
 
@@ -518,6 +518,10 @@ function addZeroToCount() {
 		current.textContent = slideIndex;
 	};
 };
+
+function deleteNotDidits(str) {
+	return +str.replace(/\D/g, '')
+}
 
 
 // // slider v.1.0
