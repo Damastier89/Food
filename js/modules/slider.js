@@ -1,17 +1,30 @@
-function slider() {
-  const slides = document.querySelectorAll('.offer__slide'),
-        slider = document.querySelector('.offer__slider'),
-        prev = document.querySelector('.offer__slider-prev'),
-        next = document.querySelector('.offer__slider-next');
-  const total = document.querySelector('#total'),
-        current = document.querySelector('#current');
-  const slidesWrapper = document.querySelector('.offer__slider-wrapper'),
-        slidesField = document.querySelector('.offer__slider-inner'),
-        widthBlockSlider = window.getComputedStyle(slidesWrapper).width;
-        
-        
+function slider({container, slide, nextArrow, prevArrow, totalCounter, currentCounter, wrapper, field}) {
+
   let slideIndex = 1;
   let offset = 0;
+  
+  const slider = document.querySelector(container), 
+        slides = document.querySelectorAll(slide),
+        prev = document.querySelector(prevArrow),
+        next = document.querySelector(nextArrow);
+  const total = document.querySelector(totalCounter),
+        current = document.querySelector(currentCounter);
+  const slidesWrapper = document.querySelector(wrapper),
+        slidesField = document.querySelector(field);
+
+  let widthBlockSlider = window.getComputedStyle(slidesWrapper).width;
+
+    window.addEventListener('resize', () => {
+      widthBlockSlider = window.getComputedStyle(slidesWrapper).width;
+      const width = parseInt(widthBlockSlider, 10);
+
+      offset = width * (slideIndex - 1);
+      slidesField.style.transition = '';
+      slidesFieldStyle();
+      setTimeout(() => {
+        slidesField.style.transition = '0.5s all';
+      });
+    })
 
   // slider v.2.0
   if (slides.length < 10) {
@@ -30,7 +43,7 @@ function slider() {
   slidesWrapper.style.overflow = 'hidden';
 
   slides.forEach(slide => { // устанавливаем для каждого слайда нужную ширину
-    slide.style.width = widthBlockSlider + 1;
+    slide.style.width = '100%';
   });
 
   slider.style.position = 'relative';
@@ -160,6 +173,6 @@ function slider() {
   
 };
 
-module.exports = slider;
+export default slider;
 
 

@@ -1,33 +1,38 @@
-function modal() {
-  const modalTrigger = document.querySelectorAll("[data-modal]");
-  const modal = document.querySelector(".modal");
+function modalOpen(modalSelector, modalTimerId) {
+  const modal = document.querySelector(modalSelector);
+  modal.style.display = "block";
+  document.body.style.overflow = "hidden";
+  
+  console.log(modalTimerId);
+  if (modalTimerId) {
+    clearInterval(modalTimerId); 
+  }
+  
+};
 
-  function modalOpen() {
-    modal.style.display = "block";
-    document.body.style.overflow = "hidden";
-    clearInterval(modalTimer); 
-  };
+function modalClose(modalSelector) {
+  const modal = document.querySelector(modalSelector);
+  modal.style.display = "none";
+  document.body.style.overflow = "";
+}
 
-  const modalTimer = setTimeout(modalOpen, 50000);
+function modal(triggerSelector, modalSelector, modalTimerId) {
+  const modalTrigger = document.querySelectorAll(triggerSelector);
+  const modal = document.querySelector(modalSelector);
 
   modalTrigger.forEach( btn => {
-    btn.addEventListener("click", modalOpen);
+    btn.addEventListener("click", () => modalOpen(modalSelector, modalTimerId));
   });
-
-  function modalClose() {
-    modal.style.display = "none";
-    document.body.style.overflow = "";
-  }
 
   modal.addEventListener("click", (event) => {
     if (event.target === modal || event.target.getAttribute('data-close') == '') {
-      modalClose();
+      modalClose(modalSelector);
     }
   });
 
   document.addEventListener("keydown", (event) => {
     if (event.code === "Escape") {
-      modalClose();
+      modalClose(modalSelector);
     }
   });
 
@@ -37,7 +42,7 @@ function modal() {
         scrollHeight = document.documentElement.scrollHeight;
     // пользователь долистал до конца страници(скролл с боку + контент стрницы)
     if (pageYOffset + clientHeight >= scrollHeight) {
-      modalOpen();
+      modalOpen(modalSelector, modalTimerId);
       window.removeEventListener("scroll", showModalByScroll);
     }
   };
@@ -46,4 +51,6 @@ function modal() {
   
 };
 
-module.exports = modal;
+export default modal;
+export { modalOpen };
+export { modalClose }; 

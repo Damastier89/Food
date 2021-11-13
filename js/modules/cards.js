@@ -1,3 +1,5 @@
+import { getData } from '../services/apiServices.js';
+
 function cards() {
   class CardMenu {
     constructor(src, alt, title, description, price, parentSelector, ...classes) { // ...classes -  колличество дополнительных классов
@@ -41,33 +43,19 @@ function cards() {
     }
   };
   
-  async function getData(url) {
-    // Данный код асенхронный , ответ может придти не сразу и в переменную 
-    // res запишется null или undefined. Для этого успользуем async/await
-    // и он будет дожидаться результата запроса
-    const request = await fetch(url);
-  
-    if (!request.ok) {
-      // выкидываем ошибку если ответ не OK
-      throw new Error(`Could not fetch ${url}, status: ${request.status}`); 
-    };
-  
-    return await request.json();
-  };
-  
-  // getData(`http://localhost:3000/menu`)
-  // 	.then(cards => { // перебираем полученный массив 
-  // 		cards.forEach(({img, altimg, title, descr, price}) => { // используем деструктуризацию для полученного обьекта
-  // 			new CardMenu(img, altimg, title, descr, price, ".menu .container").render();
-  // 		});
-  // 	});
-  
-  axios.get(`http://localhost:3000/menu`)
-    .then(cards => { // перебираем полученный массив
-      cards.data.forEach(({img, altimg, title, descr, price}) => { // используем деструктуризацию для полученного обьекта
-        new CardMenu(img, altimg, title, descr, price, ".menu .container").render();
-      })
+  getData(`http://localhost:3000/menu`)
+  	.then(cards => { // перебираем полученный массив 
+  		cards.forEach(({img, altimg, title, descr, price}) => { // используем деструктуризацию для полученного обьекта
+  		  new CardMenu(img, altimg, title, descr, price, ".menu .container").render();
+  	  });
     });
+  
+  // axios.get(`http://localhost:3000/menu`)
+  //   .then(cards => { // перебираем полученный массив
+  //     cards.data.forEach(({img, altimg, title, descr, price}) => { // используем деструктуризацию для полученного обьекта
+  //       new CardMenu(img, altimg, title, descr, price, ".menu .container").render();
+  //     })
+  //   });
   
   
   // new CardMenu (
@@ -104,4 +92,4 @@ function cards() {
 
 };
 
-module.exports = cards;
+export default cards;

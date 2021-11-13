@@ -1,5 +1,8 @@
-function form() {
-  const forms = document.querySelectorAll('form');
+import { modalOpen , modalClose } from "./modal.js";
+import { postData } from '../services/apiServices.js'
+
+function form(formSelector, modalTimer) {
+  const forms = document.querySelectorAll(formSelector);
 
   const message = {
     loading: 'img/spinner.svg',
@@ -11,20 +14,6 @@ function form() {
     bindPostData(form);
   });
 
-  async function postData(url, data) {
-    // Данный код асенхронный , ответ может придти не сразу и в переменную 
-    // res запишется null или undefined. Для этого успользуем async/await
-    // и он будет дожидаться результата запроса
-    const res = await fetch(url, { 
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: data
-    })
-
-    return await res.json();
-  };
 
   function bindPostData(form) {
     form.addEventListener('submit', (event) => {
@@ -94,7 +83,7 @@ function form() {
     const prevModalDialog = document.querySelector('.modal__dialog');
 
     prevModalDialog.classList.add('hide');
-    modalOpen();
+    modalOpen('.modal', modalTimer);
 
     const thanksModal = document.createElement('div');
     thanksModal.classList.add('modal__dialog');
@@ -110,10 +99,10 @@ function form() {
       thanksModal.remove();
       prevModalDialog.classList.add('show');
       prevModalDialog.classList.remove('hide');
-      modalClose();
+      modalClose('.modal');
     }, 3000);
 
   };
 };
 
-module.exports = form;
+export default form;
